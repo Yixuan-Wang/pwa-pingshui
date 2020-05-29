@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: process.env.NODE_ENV === "production" ? "/pwa-pingshui" : "/",
   pwa: {
     name: 'Pingshui',
     themeColor: '#35495e',
