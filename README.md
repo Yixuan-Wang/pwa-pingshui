@@ -1,4 +1,6 @@
-# pwa-pingshui
+# Pingshui
+
+平水韵查询
 
 ## Project setup
 ```
