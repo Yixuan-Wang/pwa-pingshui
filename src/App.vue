@@ -6,6 +6,10 @@
           v-model="query"
           class="query"
           lang="zh"
+          type="text"
+          label="query"
+          placeholder="输入要查询的字、词或句子……"
+          autofocus
         >
       </div>
       <p
@@ -27,7 +31,11 @@
 <script>
 
 //import TheSearch from './components/TheSearch.vue'
-const DATA = require('./assets/dicts').default
+let DATA
+import('./assets/dicts').then((module) => {
+  DATA = module.default
+});
+
 const PUNC = {"，":true, "。":true, "；":true, "！":true, "？":true, " ":true}
 const PATTERN = {"平":"-", "上":"|", "去":"|", "入":"|"}
 const CONTOUR = 0
@@ -35,8 +43,6 @@ const GROUP = 1
 const EXPLANATION = 2
 
 function lookUp(words) {
-  /* eslint-disable no-console */
-  console.log("LOOKINGUP")
   let reference = ''
   let pattern = ''
 
@@ -115,7 +121,7 @@ export default {
 .query {
   display: block;
   width: 100%;
-  height: 1.5em;
+  height: 1.75em;
   font-size: unset;
 }
 
