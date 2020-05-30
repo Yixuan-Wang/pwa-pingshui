@@ -10,7 +10,6 @@
           type="text"
           label="query"
           placeholder="输入要查询的字、词或句子……"
-          autofocus
         >
       </div>
       <p
@@ -145,7 +144,7 @@ export default {
 
 .query {
   display: block;
-  width: 100%;
+  width: calc(100% - 8px);
   height: 1.75em;
   font-size: unset;
 }
