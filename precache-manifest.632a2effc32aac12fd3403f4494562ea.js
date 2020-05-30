@@ -1,15 +1,15 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "630b92f0735adfefecc4",
-    "url": "/pwa-pingshui/css/app.7cef9b50.css"
+    "revision": "937d0137ef79cdb72964",
+    "url": "/pwa-pingshui/css/app.a432bb21.css"
   },
   {
-    "revision": "54b26e2778c144e1ac310072dbd5a992",
+    "revision": "5071ccf9a5c9e94e18aa27f4f5634dc8",
     "url": "/pwa-pingshui/index.html"
   },
   {
-    "revision": "630b92f0735adfefecc4",
-    "url": "/pwa-pingshui/js/app.52d13dfd.js"
+    "revision": "937d0137ef79cdb72964",
+    "url": "/pwa-pingshui/js/app.4e365c67.js"
   },
   {
     "revision": "9b7e24f51499102d3f92",
