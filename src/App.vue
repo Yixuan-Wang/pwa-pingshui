@@ -1,3 +1,4 @@
+/* eslint-disable vue/script-indent */
 <template>
   <div id="app">
     <div>
@@ -29,6 +30,8 @@
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
+import { OpenCC } from './opencc'
 
 //import TheSearch from './components/TheSearch.vue'
 let DATA
@@ -41,8 +44,21 @@ const PATTERN = {"平":"-", "上":"|", "去":"|", "入":"|"}
 const CONTOUR = 0
 const GROUP = 1
 const EXPLANATION = 2
+/* eslint-disable no-console */
+
+let cc
+(async () => {
+  cc = await OpenCC.PresetConverter({ fromVariant: 't', toVariant: 'cn' })
+})();
+
+cc = {
+  convert: words => { return words } // Dummy
+}
 
 function lookUp(words) {
+  /* eslint-disable no-console */
+  words = cc.convert(words)
+
   let reference = ''
   let pattern = ''
 
