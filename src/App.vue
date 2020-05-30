@@ -26,6 +26,14 @@
         {{ result.pattern }}
       </p>
     </div>
+    <div>
+      <p
+        class="version"
+        lang="zh"
+      >
+        版本 {{ version }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -112,7 +120,8 @@ export default {
   },
   data: function() {
     return {
-      query: ""
+      query: "",
+      version: process.env.VUE_APP_VERSION,
     }
   },
   computed: {
@@ -143,5 +152,9 @@ export default {
 
 .result-pattern {
   font-family:'Courier New', Courier, monospace;
+}
+
+.version {
+  color: gray;
 }
 </style>
