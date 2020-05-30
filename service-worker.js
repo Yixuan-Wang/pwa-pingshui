@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/pwa-pingshui/precache-manifest.53dd6ca82d0ee3b453f27e6bd3955514.js"
+  "/pwa-pingshui/precache-manifest.1d54e203e48f87a3c83bb560cc3bab43.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "pwa-pingshui"});
@@ -33,4 +33,4 @@ self.addEventListener('message', (event) => {
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/.*/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"pingshui", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 1296000, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
+workbox.routing.registerRoute(/.*/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"pingshui", plugins: [new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
