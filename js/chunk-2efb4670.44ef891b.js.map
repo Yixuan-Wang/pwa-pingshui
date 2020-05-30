@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/assets/dicts/index.js"],"names":["require"],"mappings":"gHAAA,OAAeA,eAAQ,S","file":"js/chunk-2efb4670.44ef891b.js","sourcesContent":["export default require('./baseCharDict.json')"],"sourceRoot":""}
