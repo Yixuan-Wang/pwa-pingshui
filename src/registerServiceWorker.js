@@ -20,8 +20,11 @@ if (process.env.NODE_ENV === 'production') {
       console.log('New content is downloading.')
     },
     updated(registration) {
-      registration.update()
-      console.log('New content is available; please refresh.')
+      registration.unregister().then(() => {
+        //并且重新加载页面
+        window.location.reload();
+      });
+      console.log('New content is available; refreshed.')
     },
     offline() {
       console.log(
