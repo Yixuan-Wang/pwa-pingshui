@@ -1,8 +1,7 @@
-/* eslint-disable vue/script-indent */
 <template>
   <div id="app">
     <div>
-      <div>
+      <div class="div-query">
         <input
           v-model="query"
           class="query"
@@ -44,7 +43,7 @@ import { OpenCC } from './opencc'
 let DATA
 import('./assets/dicts').then((module) => {
   DATA = module.default
-});
+})
 
 const PUNC = {"，":true, "。":true, "；":true, "！":true, "？":true, " ":true}
 const PATTERN = {"平":"-", "上":"|", "去":"|", "入":"|"}
@@ -56,7 +55,7 @@ const EXPLANATION = 2
 let cc
 (async () => {
   cc = await OpenCC.PresetConverter({ fromVariant: 't', toVariant: 'cn' })
-})();
+})()
 
 cc = {
   convert: words => { return words } // Dummy
@@ -115,12 +114,11 @@ function lookUp(words) {
 
 export default {
   name: 'App',
-  components: {
-  },
+  components: {},
   data: function() {
     return {
-      query: "",
-      version: process.env.VUE_APP_VERSION,
+      query: '',
+      version: process.env.VUE_APP_VERSION
     }
   },
   computed: {
@@ -129,7 +127,6 @@ export default {
     }
   }
 }
-
 </script>
 
 <style>
@@ -142,15 +139,36 @@ export default {
   margin: 2em;
 }
 
+.div-query {
+  outline: none;
+}
+
 .query {
   display: block;
-  width: calc(100% - 8px);
+  padding-left: 0px;
+  padding-right: 0px;
+  border-style: none none solid;
+  border-width: 0px 0px 2px;
+  border-color: gray;
+  border-radius: 0;
+  width: 100%;
   height: 1.75em;
   font-size: unset;
 }
 
+.query:hover {
+  border-color: #2c3e50;
+}
+
+.query:focus {
+  outline: none;
+  border-style: none none solid;
+  border-width: 0px 0px 2px;
+  border-color: #2c3e50;
+}
+
 .result-pattern {
-  font-family:'Courier New', Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .version {
