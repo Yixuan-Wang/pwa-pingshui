@@ -21,7 +21,24 @@
       <p
         class="result-pattern"
       >
-        {{ result.pattern }}
+        <span
+          v-for="each in result.pattern"
+          :key="each.id"
+        >
+          <span
+            v-if="each.type === 'normal'"
+            class="pattern-normal"
+          >{{ each.text }}</span>
+          <span
+            v-if="each.type === 'undecided'"
+            class="pattern-undecided"
+            @click="switchPattern(each.id)"
+          >{{ each.text }}</span>
+          <span
+            v-if="each.type === 'separator'"
+            class="pattern-separator"
+          >{{ each.text }}</span>
+        </span>
       </p>
     </div>
     <div>
@@ -31,6 +48,12 @@
       >
         版本 {{ version }}
       </p>
+    </div>
+    <div
+      class="dummy"
+      style="display:none"
+    >
+      {{ dummy }}
     </div>
   </div>
 </template>
@@ -66,25 +89,26 @@ function lookUp(words) {
   words = cc.convert(words)
 
   let reference = ''
-  let pattern = ''
+  let pattern = []
 
   let iterator = words[Symbol.iterator]()
   let item = iterator.next()
+  let length = words.length
   let char, thisPattern
 
-  while (!item.done) {
+  for (let i = 0; i < length; i++) {
     char = item.value
 
     if (char in PUNC) {
       reference += '\n'
-      pattern += ' '
+      pattern.push({ id: i, text: ' ', type: 'separator' })
       item = iterator.next()
       continue
     }
 
     if (!(char in DATA)) {
       reference += char + ' | ?\n'
-      pattern += '?'
+      pattern.push({ id: i, text: '?', type: 'undecided' })
       item = iterator.next()
       continue
     }
@@ -96,11 +120,13 @@ function lookUp(words) {
       if (thisPattern == '') thisPattern = PATTERN[items[CONTOUR]]
       else if (thisPattern != PATTERN[items[CONTOUR]]) thisPattern = '?'
 
-      if (items[EXPLANATION].length == 0) reference += `${items[CONTOUR]} ${items[GROUP]}`
-      else reference += `${items[CONTOUR]} ${items[GROUP]}(${items[EXPLANATION]})`
-      reference += "；"
-    });
-    pattern += thisPattern
+      if (items[EXPLANATION].length == 0)
+        reference += `${items[CONTOUR]} ${items[GROUP]}`
+      else
+        reference += `${items[CONTOUR]} ${items[GROUP]}(${items[EXPLANATION]})`
+      reference += '；'
+    })
+    pattern.push({ id: i, text: thisPattern, type: thisPattern === '?' ? 'undecided' : 'normal' })
     reference += '\n'
 
     item = iterator.next()
@@ -118,12 +144,27 @@ export default {
   data: function() {
     return {
       query: '',
+      dummy: 0,
       version: process.env.VUE_APP_VERSION
     }
   },
   computed: {
     result: function() {
       return lookUp(this.$data.query)
+    }
+  },
+  methods: {
+    switchPattern: function(id) {
+      const SYMBOLS = ['?', '-', '|']
+      let length = 3
+      let currentSymbol = this.result.pattern[id].text
+      for (let i = 0; i < length; i++) {
+        if (currentSymbol === SYMBOLS[i]) {
+          this.result.pattern[id].text = SYMBOLS[(i + 1) % 3]
+          this.dummy += 1
+          break
+        }
+      }
     }
   }
 }
