@@ -14,30 +14,57 @@
       <p
         class="result-reference"
         lang="zh"
-        style="white-space: pre-line"
       >
-        {{ result.reference }}
+        <span
+          v-for="character in result.reference"
+          :key="character.id"
+        >
+          <span
+            v-if="character.type === 'character'"
+          >
+            <a
+              class="character-text"
+              :href="`http://www.guoxuedashi.com/so.php?sokeytm=${character.text}&ka=100`"
+              target="_blank"
+            >{{ character.text }}</a>
+            |
+            <span
+              v-for="(term, index) in character.terms"
+              :key="index"
+              class="character-term"
+            >
+              {{ term.contour }}{{ term.group }}<span v-if="term.explanation">[{{ term.explanation }}]</span>
+            </span>
+          </span>
+          <span
+            v-else-if="character.type === 'unknown'"
+          >
+            <span class="character-text">{{ character.text }}</span>
+            | ?
+          </span>
+          <br>
+        </span>
       </p>
       <p
         class="result-pattern"
       >
         <span
-          v-for="each in result.pattern"
-          :key="each.id"
+          v-for="pattern in result.pattern"
+          :key="pattern.id"
         >
           <span
-            v-if="each.type === 'normal'"
+            v-if="pattern.type === 'normal'"
             class="pattern-normal"
-          >{{ each.text }}</span>
+          >{{ pattern.text }}</span>
           <span
-            v-if="each.type === 'undecided'"
+            v-if="pattern.type === 'undecided'"
             class="pattern-undecided"
-            @click="switchPattern(each.id)"
-          >{{ each.text }}</span>
+            @click="switchPattern(pattern.id)"
+          >{{ pattern.text }}</span>
           <span
-            v-if="each.type === 'separator'"
+            v-if="pattern.type === 'separator'"
             class="pattern-separator"
-          >{{ each.text }}</span>
+          >{{ pattern.text }}</span>
         </span>
       </p>
     </div>
@@ -88,46 +115,49 @@ function lookUp(words) {
   /* eslint-disable no-console */
   words = cc.convert(words)
 
-  let reference = ''
+  let reference = []
   let pattern = []
 
   let iterator = words[Symbol.iterator]()
   let item = iterator.next()
   let length = words.length
-  let char, thisPattern
+  let char, thisPattern, thisReference, thisTerm
 
   for (let i = 0; i < length; i++) {
-    char = item.value
+    char = words[i]
 
     if (char in PUNC) {
-      reference += '\n'
+      reference.push({ id: i, type: 'punctuation', text: char })
       pattern.push({ id: i, text: ' ', type: 'separator' })
       item = iterator.next()
       continue
     }
 
     if (!(char in DATA)) {
-      reference += char + ' | ?\n'
+      reference.push({ id: i, type: 'unknown', text: char })
+      // reference += char + ' | ?\n'
       pattern.push({ id: i, text: '?', type: 'undecided' })
       item = iterator.next()
       continue
     }
 
-    reference += char + ' | '
     thisPattern = ''
+    thisReference = { id: i, type: 'character', text: char, terms: [] }
 
     DATA[char].forEach(items => {
+      thisTerm = { focused: false }
       if (thisPattern == '') thisPattern = PATTERN[items[CONTOUR]]
       else if (thisPattern != PATTERN[items[CONTOUR]]) thisPattern = '?'
 
-      if (items[EXPLANATION].length == 0)
-        reference += `${items[CONTOUR]} ${items[GROUP]}`
-      else
-        reference += `${items[CONTOUR]} ${items[GROUP]}(${items[EXPLANATION]})`
-      reference += '；'
+      thisTerm['contour'] = items[CONTOUR]
+      thisTerm['group'] = items[GROUP]
+      if (items[EXPLANATION].length !== 0) thisTerm['explanation'] = items[EXPLANATION]
+      else thisTerm['explanation'] = null
+
+      thisReference.terms.push(thisTerm)
     })
+    reference.push(thisReference)
     pattern.push({ id: i, text: thisPattern, type: thisPattern === '?' ? 'undecided' : 'normal' })
-    reference += '\n'
 
     item = iterator.next()
   }
@@ -165,7 +195,7 @@ export default {
           break
         }
       }
-    }
+    },
   }
 }
 </script>
@@ -206,6 +236,19 @@ export default {
   border-style: none none solid;
   border-width: 0px 0px 2px;
   border-color: #2c3e50;
+}
+
+.character-text {
+  display: inline-block;
+  min-width: 1em;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: inherit;
+}
+
+.character-term {
+  display: inline-block;
+  margin-right: 0.5em;
 }
 
 .result-pattern {
