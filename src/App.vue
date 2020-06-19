@@ -12,6 +12,29 @@
         >
       </div>
       <p
+        class="result-pattern"
+      >
+        <span
+          v-for="pattern in result.pattern"
+          :key="pattern.id"
+          class="pattern"
+        >
+          <span
+            v-if="pattern.type === 'normal'"
+            class="pattern-normal"
+          >{{ pattern.text }}</span>
+          <span
+            v-if="pattern.type === 'undecided'"
+            class="pattern-undecided"
+            @click="switchPattern(pattern.id)"
+          >{{ pattern.text }}</span>
+          <span
+            v-if="pattern.type === 'separator'"
+            class="pattern-separator"
+          >{{ pattern.text }}</span>
+        </span>
+      </p>
+      <p
         class="result-reference"
         lang="zh"
       >
@@ -28,12 +51,15 @@
               target="_blank"
             >{{ character.original }}</a>
             |
-            <span
-              v-for="(term, index) in character.terms"
-              :key="index"
-              class="character-term"
-            >
-              <span class="term-contour" :style="`color:${getContourColor(term.contour)}`">{{ term.contour }}</span><span class="term-group">{{ term.group }}</span><span v-if="term.explanation" class="term-explanation">[{{ term.explanation }}]</span>
+            <span class="character-terms">
+              <span
+                v-for="(term, index) in character.terms"
+                :key="index"
+                class="character-term"
+                @click="switchTerm(character.id, index)"
+              >
+                <span class="term-contour" :style="`color:${getContourColor(term.contour)}`">{{ term.contour }}</span><span class="term-group">{{ term.group }}</span><span v-if="term.explanation" class="term-explanation">[{{ term.explanation }}]</span>
+              </span>
             </span>
           </span>
           <span
@@ -43,28 +69,6 @@
             | ?
           </span>
           <br>
-        </span>
-      </p>
-      <p
-        class="result-pattern"
-      >
-        <span
-          v-for="pattern in result.pattern"
-          :key="pattern.id"
-        >
-          <span
-            v-if="pattern.type === 'normal'"
-            class="pattern-normal"
-          >{{ pattern.text }}</span>
-          <span
-            v-if="pattern.type === 'undecided'"
-            class="pattern-undecided"
-            @click="switchPattern(pattern.id)"
-          >{{ pattern.text }}</span>
-          <span
-            v-if="pattern.type === 'separator'"
-            class="pattern-separator"
-          >{{ pattern.text }}</span>
         </span>
       </p>
     </div>
@@ -198,6 +202,19 @@ export default {
       }
     },
 
+    switchTerm: function(charID, termID) {
+      this.result.pattern[charID].text = PATTERN[this.result.reference[charID].terms[termID].contour]
+
+      if (termID !== 0) {
+        let swapMediate
+        swapMediate = this.result.reference[charID].terms[termID]
+        this.result.reference[charID].terms[termID] = this.result.reference[charID].terms[0]
+        this.result.reference[charID].terms[0] = swapMediate
+      }
+
+      this.dummy += 1
+    },
+
     getContourColor: (contour) => {
       return {
         '平': '#2e317c',
@@ -266,8 +283,19 @@ export default {
   margin-right: 0.5em;
 }
 
+.character-term:not(:first-child) {
+  opacity: 75%;
+}
+
 .result-pattern {
+  margin-top: 0.25em;
+}
+
+.pattern {
+  display: inline-block;
   font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  width: 1rem;
 }
 
 .version {
