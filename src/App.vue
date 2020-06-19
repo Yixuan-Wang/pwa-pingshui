@@ -284,7 +284,7 @@ export default {
 }
 
 .character-term:not(:first-child) {
-  opacity: 75%;
+  opacity: 0.75;
 }
 
 .result-pattern {
