@@ -60,7 +60,7 @@
 
 <script>
 /* eslint-disable no-unused-vars */
-import { OpenCC } from './opencc'
+import { OpenCC } from './helper/opencc'
 
 //import TheSearch from './components/TheSearch.vue'
 let DATA
