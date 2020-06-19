@@ -33,7 +33,7 @@
               :key="index"
               class="character-term"
             >
-              {{ term.contour }}{{ term.group }}<span v-if="term.explanation">[{{ term.explanation }}]</span>
+              <span class="term-contour" :style="`color:${getContourColor(term.contour)}`">{{ term.contour }}</span><span class="term-group">{{ term.group }}</span><span v-if="term.explanation" class="term-explanation">[{{ term.explanation }}]</span>
             </span>
           </span>
           <span
@@ -197,6 +197,15 @@ export default {
         }
       }
     },
+
+    getContourColor: (contour) => {
+      return {
+        '平': '#2e317c',
+        '上': '#1177b0',
+        '去': '#12aa9c',
+        '入': '#229453',
+      }[contour]
+    }
   }
 }
 </script>
@@ -209,6 +218,11 @@ export default {
   text-align: left;
   color: #2c3e50;
   margin: 2em;
+}
+
+::selection {
+  background-color: #2c3e50;
+  color: white;
 }
 
 .div-query {
