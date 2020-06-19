@@ -24,9 +24,9 @@
           >
             <a
               class="character-text"
-              :href="`http://www.guoxuedashi.com/so.php?sokeytm=${character.text}&ka=100`"
+              :href="`http://www.guoxuedashi.com/so.php?sokeytm=${character.original}&ka=100`"
               target="_blank"
-            >{{ character.text }}</a>
+            >{{ character.original }}</a>
             |
             <span
               v-for="(term, index) in character.terms"
@@ -113,6 +113,7 @@ cc = {
 
 function lookUp(words) {
   /* eslint-disable no-console */
+  let original = words
   words = cc.convert(words)
 
   let reference = []
@@ -142,7 +143,7 @@ function lookUp(words) {
     }
 
     thisPattern = ''
-    thisReference = { id: i, type: 'character', text: char, terms: [] }
+    thisReference = { id: i, type: 'character', text: char, original: original[i], terms: [] }
 
     DATA[char].forEach(items => {
       thisTerm = { focused: false }
