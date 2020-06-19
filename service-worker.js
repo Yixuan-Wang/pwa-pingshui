@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/pwa-pingshui/precache-manifest.4d88c7f97efbba816f09e205747544ef.js"
+  "/pwa-pingshui/precache-manifest.678dc9e4bab992eacee2de5ac4e9a707.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "pwa-pingshui"});
