@@ -1,11 +1,13 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    lang="zh"
+  >
     <div>
       <div class="div-query">
         <input
           v-model="query"
           class="query"
-          lang="zh"
           type="text"
           label="query"
           placeholder="输入要查询的字、词或句子……"
@@ -47,7 +49,7 @@
           >
             <a
               class="character-text"
-              :href="`http://www.guoxuedashi.com/so.php?sokeytm=${character.original}&ka=100`"
+              :href="useSearchService(character.original)"
               target="_blank"
             >{{ character.original }}</a>
             |
@@ -71,6 +73,13 @@
           <br>
         </span>
       </p>
+    </div>
+    <div>
+      <button
+        @click="switchSearchService"
+      >
+        使用{{ searchService[currentSearchService].name }}搜索
+      </button>
     </div>
     <div>
       <p
@@ -179,6 +188,21 @@ export default {
   data: function() {
     return {
       query: '',
+      currentSearchService: 0,
+      searchService: [
+        {
+          name: '國學大師',
+          url: 'http://www.guoxuedashi.com/so.php?sokeytm=%s&ka=100'
+        },
+        {
+          name: '韻典',
+          url: 'https://ytenx.org/zim?dzih=%s&dzyen=1&jtkb=1&jtkd=1&jtdt=1&jtgt=1'
+        },
+        {
+          name: '搜韻',
+          url: 'https://sou-yun.cn/QR.aspx?c=%s'
+        }
+      ],
       dummy: 0,
       version: process.env.VUE_APP_VERSION
     }
@@ -222,7 +246,14 @@ export default {
         '去': '#12aa9c',
         '入': '#229453',
       }[contour]
-    }
+    },
+
+    switchSearchService: function() {
+      this.currentSearchService = (this.currentSearchService + 1) % 3
+    },
+    useSearchService: function(word) {
+      return this.searchService[this.currentSearchService].url.replace("%s", word)
+    },
   }
 }
 </script>
@@ -296,6 +327,32 @@ export default {
   font-family: 'Courier New', Courier, monospace;
   text-align: center;
   width: 1rem;
+}
+
+button {
+  text-rendering: auto;
+  color: gray;
+  font-size: 1rem;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: pointer;
+  background-color: unset;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  border: none;
+  outline: none;
+}
+
+button:hover {
+  color: #2c3e50;
+  text-decoration: underline dashed;
 }
 
 .version {
