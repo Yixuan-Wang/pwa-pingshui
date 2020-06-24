@@ -80,14 +80,18 @@
       >
         使用{{ searchService[currentSearchService].name }}搜索
       </button>
-    </div>
-    <div>
-      <p
+      <button
+        @click="clearInertia"
+      >
+        抹去記憶
+      </button>
+      <br>
+      <span
         class="version"
         lang="zh"
       >
         版本 {{ version }}
-      </p>
+      </span>
     </div>
     <div
       class="dummy"
@@ -158,6 +162,12 @@ function lookUp(words) {
     thisPattern = ''
     thisReference = { id: i, type: 'character', text: char, original: original[i], terms: [] }
 
+    if (char in this.inertia) {
+      reference.push(this.inertia[char].reference)
+      pattern.push(this.inertia[char].pattern)
+      continue
+    }
+
     DATA[char].forEach(items => {
       thisTerm = { focused: false }
       if (thisPattern == '') thisPattern = PATTERN[items[CONTOUR]]
@@ -172,8 +182,6 @@ function lookUp(words) {
     })
     reference.push(thisReference)
     pattern.push({ id: i, text: thisPattern, type: thisPattern === '?' ? 'undecided' : 'normal' })
-
-    item = iterator.next()
   }
 
   return {
@@ -188,6 +196,7 @@ export default {
   data: function() {
     return {
       query: '',
+      inertia: {},
       currentSearchService: 0,
       searchService: [
         {
@@ -209,23 +218,10 @@ export default {
   },
   computed: {
     result: function() {
-      return lookUp(this.$data.query)
+      return lookUp.call(this, this.$data.query)
     }
   },
   methods: {
-    switchPattern: function(id) {
-      const SYMBOLS = ['?', '-', '|']
-      let length = 3
-      let currentSymbol = this.result.pattern[id].text
-      for (let i = 0; i < length; i++) {
-        if (currentSymbol === SYMBOLS[i]) {
-          this.result.pattern[id].text = SYMBOLS[(i + 1) % 3]
-          this.dummy += 1
-          break
-        }
-      }
-    },
-
     switchTerm: function(charID, termID) {
       this.result.pattern[charID].text = PATTERN[this.result.reference[charID].terms[termID].contour]
 
@@ -234,6 +230,12 @@ export default {
         swapMediate = this.result.reference[charID].terms[termID]
         this.result.reference[charID].terms[termID] = this.result.reference[charID].terms[0]
         this.result.reference[charID].terms[0] = swapMediate
+      }
+
+      let char = this.result.reference[charID].text
+      this.inertia[char] = {
+        reference: this.result.reference[charID],
+        pattern: this.result.pattern[charID]
       }
 
       this.dummy += 1
@@ -254,6 +256,10 @@ export default {
     useSearchService: function(word) {
       return this.searchService[this.currentSearchService].url.replace("%s", word)
     },
+
+    clearInertia: function() {
+      this.inertia = {}
+    }
   }
 }
 </script>
@@ -344,7 +350,7 @@ button {
   cursor: pointer;
   background-color: unset;
   box-sizing: border-box;
-  margin: 0px;
+  margin: 0px 1rem 0px 0px;
   padding: 0px;
   border: none;
   outline: none;
