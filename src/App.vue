@@ -28,7 +28,6 @@
           <span
             v-if="pattern.type === 'undecided'"
             class="pattern-undecided"
-            @click="switchPattern(pattern.id)"
           >{{ pattern.text }}</span>
           <span
             v-if="pattern.type === 'separator'"
@@ -139,7 +138,7 @@ function lookUp(words) {
   let iterator = words[Symbol.iterator]()
   let item = iterator.next()
   let length = words.length
-  let char, thisPattern, thisReference, thisTerm
+  let char, thisPatternText, thisReference, thisTerm
 
   for (let i = 0; i < length; i++) {
     char = words[i]
@@ -159,19 +158,25 @@ function lookUp(words) {
       continue
     }
 
-    thisPattern = ''
+    thisPatternText = ''
     thisReference = { id: i, type: 'character', text: char, original: original[i], terms: [] }
 
-    if (char in this.inertia) {
-      reference.push(this.inertia[char].reference)
-      pattern.push(this.inertia[char].pattern)
+    if (thisReference.original in this.inertia) {
+      thisReference.terms = this.inertia[thisReference.original].reference.terms
+      console.log(i, thisReference)
+      reference.push(thisReference)
+      pattern.push({
+        id: i,
+        text: this.inertia[thisReference.original].pattern.text,
+        type: this.inertia[thisReference.original].pattern.type,
+      })
       continue
     }
 
     DATA[char].forEach(items => {
       thisTerm = { focused: false }
-      if (thisPattern == '') thisPattern = PATTERN[items[CONTOUR]]
-      else if (thisPattern != PATTERN[items[CONTOUR]]) thisPattern = '?'
+      if (thisPatternText == '') thisPatternText = PATTERN[items[CONTOUR]]
+      else if (thisPatternText != PATTERN[items[CONTOUR]]) thisPatternText = '?'
 
       thisTerm['contour'] = items[CONTOUR]
       thisTerm['group'] = items[GROUP]
@@ -181,7 +186,7 @@ function lookUp(words) {
       thisReference.terms.push(thisTerm)
     })
     reference.push(thisReference)
-    pattern.push({ id: i, text: thisPattern, type: thisPattern === '?' ? 'undecided' : 'normal' })
+    pattern.push({ id: i, text: thisPatternText, type: thisPatternText === '?' ? 'undecided' : 'normal' })
   }
 
   return {
@@ -223,6 +228,7 @@ export default {
   },
   methods: {
     switchTerm: function(charID, termID) {
+      console.log([charID, termID])
       this.result.pattern[charID].text = PATTERN[this.result.reference[charID].terms[termID].contour]
 
       if (termID !== 0) {
@@ -232,8 +238,8 @@ export default {
         this.result.reference[charID].terms[0] = swapMediate
       }
 
-      let char = this.result.reference[charID].text
-      this.inertia[char] = {
+      let original = this.result.reference[charID].original
+      this.inertia[original] = {
         reference: this.result.reference[charID],
         pattern: this.result.pattern[charID]
       }
