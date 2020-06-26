@@ -80,9 +80,16 @@
         使用{{ searchService[currentSearchService].name }}搜索
       </button>
       <button
+        title="一次查询涉及一个字的多种音项时请关闭记忆功能"
+        @click="switchInertia"
+      >
+        {{ useInertia ? '记忆开启' : '记忆关闭' }}
+      </button>
+      <button
+        v-if="useInertia"
         @click="clearInertia"
       >
-        抹去記憶
+        抹去记忆
       </button>
       <br>
       <span
@@ -161,7 +168,7 @@ function lookUp(words) {
     thisPatternText = ''
     thisReference = { id: i, type: 'character', text: char, original: original[i], terms: [] }
 
-    if (thisReference.original in this.inertia) {
+    if (thisReference.original in this.inertia && this.useInertia) {
       thisReference.terms = this.inertia[thisReference.original].reference.terms
       console.log(i, thisReference)
       reference.push(thisReference)
@@ -202,6 +209,7 @@ export default {
     return {
       query: '',
       inertia: {},
+      useInertia: true,
       currentSearchService: 0,
       searchService: [
         {
@@ -263,6 +271,10 @@ export default {
       return this.searchService[this.currentSearchService].url.replace("%s", word)
     },
 
+    switchInertia: function() {
+      this.useInertia = !this.useInertia
+      if (!this.useInertia) this.clearInertia()
+    },
     clearInertia: function() {
       this.inertia = {}
     }
