@@ -214,7 +214,7 @@ export default {
       searchService: [
         {
           name: '國學大師',
-          url: 'http://www.guoxuedashi.com/so.php?sokeytm=%s&ka=100'
+          url: 'http://www.guoxuedashi.net/so.php?sokeytm=%s&ka=100'
         },
         {
           name: '韻典',
